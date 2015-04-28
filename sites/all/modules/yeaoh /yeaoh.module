@@ -1,0 +1,6 @@
+<?php
+//make registered email address become to the account name 
+function yeaoh_email_registration_name($edit, $account){
+$edit = array('name' => $account->mail);
+return $edit;
+}

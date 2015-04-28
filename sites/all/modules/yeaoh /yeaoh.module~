@@ -1,0 +1,8 @@
+<?php
+
+function yeaoh_email_registration_name($edit, $account){
+
+$edit = array('name' => $account->mail);
+return $edit;
+
+}
