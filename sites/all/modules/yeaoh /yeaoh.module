@@ -4,3 +4,73 @@ function yeaoh_email_registration_name($edit, $account){
 $edit = array('name' => $account->mail);
 return $edit;
 }
+
+function yeaoh_form_comment_form_alter(&$form,&$form_state){
+
+    if($form['#node']->type="awb_tracking"){
+      $form['#submit'][] = 'send_comment_email';
+    }
+
+}
+
+function send_comment_email(&$form,&$form_state){
+
+  $nid  = $form_state['values']['nid'];
+  $node = node_load($nid);
+   $arr = array();
+
+  if(!empty($node->field_user['und'][0])){
+   $customer = $node->field_user['und'][0]['user'];
+   $customer_email =  $customer->mail;
+   }
+    if(!empty($node->field_email['und'])){
+      foreach($node->field_email['und'] as $mails){
+	$arr[] = $mails['email'];
+      }
+
+    }
+
+
+if(!empty($customer_email)){
+  if(!in_array($customer_email,$arr)){
+     $arr[] = $customer_email;
+  }
+
+}
+
+  $site_mail = variable_get('site_mail');
+   
+  if(!empty($form_state['values']['field_notification'])){
+     if($form_state['values']['field_notification']['und'][0]['value']==1){
+	
+    foreach($arr as $mail){
+
+     $module = 'yeaoh_module';
+     $key = 'yeaoh_key';
+     $language = language_default();
+     $params = array(
+      '@url' => url('node/' . $node->nid, array('absolute' => TRUE)),
+      '@title' => $node->title,
+    );
+ 	  drupal_mail($module, $key, $mail, $language, $params);
+
+
+ 	}
+
+     }
+  }
+
+
+
+/**
+ * Implements hook_mail().
+ */
+function yeaoh_mail($key, &$message, $params) {
+  $message['subject'] = t("@title event registration confirmation", $params);
+  $message['body'] = array();
+  $message['body'][] = t("Hello", $params);
+  $message['body'][] = t("Node has been created @title (@url).", $params);
+}
+
+
+}

@@ -1,5 +1,0 @@
-name = yeaoh
-description = A block module that lists links to recent posts.
-package = Views
-core = 7.x
-php = 5.2

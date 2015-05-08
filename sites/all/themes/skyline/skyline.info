@@ -1,0 +1,31 @@
+
+name = Skyline
+description = A custom theme.
+package = Core
+version = VERSION
+core = 7.x
+
+stylesheets[all][] = css/font-awesome.min.css
+stylesheets[all][] = css/bootstrap.css
+stylesheets[all][] = css/layout.css
+stylesheets[all][] = css/style.css
+
+stylesheets[print][] = css/print.css
+
+scripts[] = js/abcd.js
+
+regions[header] = Header
+regions[banner] = Banner
+regions[home] = Home 
+regions[content] = Content
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+regions[footer] = Footer
+
+
+
+; Information added by Drupal.org packaging script on 2015-03-18
+version = "7.35"
+project = "drupal"
+datestamp = "1426707463"
+
