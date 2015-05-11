@@ -60,7 +60,7 @@ if(!empty($customer_email)){
      }
   }
 
-
+}
 
 /**
  * Implements hook_mail().
@@ -72,5 +72,193 @@ function yeaoh_mail($key, &$message, $params) {
   $message['body'][] = t("Node has been created @title (@url).", $params);
 }
 
+/**
+* Implements hook_block_info().
+*/
+function yeaoh_block_info() {
+  $blocks['trace_search'] = array(
+    'info' => t('Trace Your Air Waybill'),
+    'region'=>-1,
+  );
+
+  return $blocks;
+}
+
+function yeaoh_menu(){
+
+   $items['trace/noresult'] = array(
+     'page callback' => 'trace_noresult',
+     'access callback' =>true,
+     'title'=>t('Trace Your Air Waybill'),
+  );
+
+   $items['trace/result/%'] = array(
+     'page callback' => 'trace_result',
+     'access callback' =>true,
+     'title'=>t('Trace Your Air Waybill'),
+  );
+
+ return $items;
+}
+
+
+
+/**
+* Implements hook_block_view().
+*/
+function yeaoh_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'trace_search':
+      $block['title'] = t('Trace Your Air Waybill');
+      $block['content'] = drupal_get_form('trace_form');
+      break;
+  }
+  return $block;
+}
+
+function trace_form($form, &$form_state){
+ $form['awb_prefix'] = array(
+   '#type'=>'textfield',
+   '#title'=>t('Enter Air Waybill Prefix and number here:'), 
+   '#size'=>15,
+   '#maxlength'=>128,
+ );
+
+ $form['awb_number'] = array(
+   '#type'=>'textfield',
+   '#title'=>t('-'), 
+   '#size'=>15,
+   '#maxlength'=>128,
+ );
+ $form['title'] = array(
+   '#type'=>'textfield',
+   '#title'=>t('Or Full AWB Number here:'), 
+   '#size'=>15,
+   '#maxlength'=>128,
+ );
+
+ $form['submit'] = array(
+   '#type'=>'submit',
+   '#value'=>t('Trace'),   
+ );
+
+ return $form;
+}
+
+function trace_form_submit(&$form, &$form_state){
+
+  $prefix = $form_state['values']['awb_prefix'];
+  $number = $form_state['values']['awb_number'];
+  $title = $form_state['values']['title'];
+  $result = '';
+
+ if($title=='' &&$prefix=='' && $number==''){
+    $form_state['redirect'] = 'trace/noresult';
+    return;
+ }elseif($title!='' &&$prefix=='' && $number==''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$title,
+	':type'=>'awb_tracking'
+	));
+   $result = $title;
+ }elseif($title!='' &&$prefix!='' && $number!=''){
+
+    $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1 or title =:awb',array(
+	':title'=>$title,
+	':type'=>'awb_tracking',
+	':awb'=>$prefix.$number,
+	));
+
+   $result = $title.'&'.$prefix.$number;
+
+ }elseif($title=='' &&$prefix!='' && $number!=''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$prefix.$number,
+	':type'=>'awb_tracking'
+	));
+   $result = $prefix.$number;
+
+ }elseif($title=='' &&$prefix!='' && $number==''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$prefix,
+	':type'=>'awb_tracking'
+       ));
+   $result = $prefix;
+
+ }elseif($title=='' &&$prefix=='' && $number!=''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$number,
+	':type'=>'awb_tracking'
+       ));
+   $result = $number;
+
+ }
+
+
+$str_nid = '';
+$count = 0; 
+foreach($nids as $nid){
+ $str_nid = $nid->nid;
+$count++;
+}
+
+ if($str_nid==''){
+     $form_state['redirect'] = 'trace/noresult';
+     return;
+ }
+
+  if($count == 1){
+     $form_state['redirect'] = 'node/'.$str_nid;
+   }else{
+     $form_state['redirect'] = 'trace/result/'.$result;
+   }
+
+ 
+
 
 }
+
+
+function trace_result(){
+
+
+  if(strpos(arg(2),'&')){
+
+  $arr = explode('&',arg(2));
+
+
+  $nids =  db_query('select * from {node} where title = :title or title =:title1 and type = :type and status = 1',array(
+	':title'=>$arr[0],
+	':title1'=>$arr[1],
+	':type'=>'awb_tracking'
+	));
+  }else{
+  $nids =  db_query('select * from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>arg(2),
+	':type'=>'awb_tracking'
+	));
+ }
+$output = '';
+
+foreach($nids as $nid){
+   $output .= '<div><a href="/node.'.$nid->nid.'">'.$nid->title.'</a></div>';
+}
+
+return $output;
+
+}
+
+function trace_noresult(){
+
+     $output = '<p>There is no data matching your input and criterion. Please correct and check again. If you think you receive this message by error, please <a href="/contact">contact us</a></p>';
+
+ return $output;
+
+}
+
+
+
+
+
+
