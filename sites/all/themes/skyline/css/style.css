@@ -2,14 +2,13 @@
 /* ---------- Overall Specifications ---------- */
 
 body {
-  line-height: 2em;
   word-wrap: break-word;
   margin: 0;
   padding: 0;
   border: 0;
   outline: 0;
   color:#666;
-  font-size:14px;
+  font-size:17px;
 }
 a:link,
 a:visited {
@@ -19,7 +18,7 @@ a:hover,
 a:active,
 a:focus {
   text-decoration: none;
-  color:black;
+  color:#37379B;
 }
 a{
 color:#25aaa0;
@@ -160,10 +159,10 @@ blockquote > p:first-child {
 
 float:left;
 width:145px;
-list-style: inside none decimal-leading-zero;
-font: 16px/20px "Raleway",Arial,Helvetica,"Nimbus Sans L",sans-serif;
 list-style: decimal-leading-zero inside none;
 height:20px;
+font-size:1.3em;
+#font: 16px/20px "Raleway",Arial,Helvetica,"Nimbus Sans L",sans-serif;
 }
 
 
@@ -217,7 +216,7 @@ text-decoration:none;
 
 #block-block-2 h2{
 color:#25aaa0;
-font-size: 1.6em;
+font-size: 2.5em;
 margin:15px 0px 20px 0px;
 font-weight:bold;
 
@@ -225,7 +224,7 @@ font-weight:bold;
 
 #block-block-2 .content p{
 
-font-size:15px;
+font-size:1.2em;
 }
 
 
@@ -235,21 +234,17 @@ border-bottom:solid 2px rgba(177, 178, 169, 0.2);
 width:115px;
 display:block;
 line-height: 1.0em;
-height: 1.7em;
+height: 1.2em;
 float:right;
 margin-right:30px;
 }
-#main-main-menu li a:hover{
 
-color:black;
-text-decoration: none;
-}
 #main-main-menu .menu_tree{
 z-index: 10;
 position:absolute;
 width: 175px;
 font-size: 13px;
-margin-top: 25px;
+margin-top: 24px;
 border-top: 2px solid #25aaa0;
 background: white;
 margin-left: -30px;
@@ -264,7 +259,6 @@ background: none repeat scroll 0% 0% #FFF;
 }
 #main-main-menu .menu_tree a{
 
-font-size: 13px;
 }
 #main-main-menu .menu_tree li{
 display: block;
@@ -278,16 +272,16 @@ display:none;
 }
 
 .icon-Schedules:before{
- content: "\f007";
+ content: "\f073";
 }
 .icon-Fuel:before{
-content: "\f0c0";
+content: "\f043";
 }
 .icon-Freight:before{
-content: "\f0ee";
+content: "\f072";
 }
 .icon-Public:before{
-content: "\f0c2";
+content: "\f080";
 }
 .icon-1:before{
 content: "\f105";
@@ -396,7 +390,7 @@ float:none !important ;
 }
 
 #login_register{
-
+font-size: 0.8em;
 float:right;
 }
 
@@ -496,7 +490,6 @@ table a:visited {
     text-decoration: none;
 }
 table a:active, table a:hover {
-    color: #bd5a35;
     text-decoration: underline;
 }
 table {
@@ -506,7 +499,6 @@ table {
     box-shadow: 0 1px 2px #d1d1d1;
     color: #666;
     font-family: Arial,Helvetica,sans-serif;
-    font-size: 12px;
     text-shadow: 1px 1px 0 #fff;
     width: 100%;
 }
@@ -652,7 +644,7 @@ input.form-text, select.form-select, input.form-file, textarea.form-textarea {
     margin-top:10px;
 }
 
-.not-front #main-wrapper .tab-content .region-content #block-system-main {
+.not-front #main-wrapper .tab-content .region-content #block-system-main ,#block-views-tracking-update-block {
     padding: 80px 10px 10px;
    
 }
@@ -819,7 +811,7 @@ height:auto;
 
 .views-field-title{
 font-weight:bold;
-font-size:20px;
+font-size:1.5em;
 line-height: 50px;
 }
 
@@ -919,4 +911,6 @@ width:100%;
 #block-yeaoh-trace-search label{
 font-weight:bold;
 }
+
+
 
