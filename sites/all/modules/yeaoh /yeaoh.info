@@ -1,4 +1,13 @@
 name = yeaoh
-description = A block module that lists links to recent posts.
+description = "custom php code ."
+
 core = 7.x
-version = "7.x-2.8"
+; This requires Drupal 7.28 or newer as it fixes the [node:summary] token that
+; was previously broken.
+
+; Information added by Drupal.org packaging script on 2014-10-10
+version = "7.x-1.4"
+core = "7.x"
+project = "yeaoh"
+datestamp = "1412909330"
+

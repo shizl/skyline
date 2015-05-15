@@ -21,7 +21,7 @@ a:focus {
   color:#37379B;
 }
 a{
-color:#25aaa0;
+color:#00A2CA;
 }
 
 
@@ -178,8 +178,8 @@ margin:0px;
 }
 
 #block-block-3{
-background:url(../images/contact.jpg);
-height:160px;
+background:#e1ddd2;
+
 }
 @media (max-width: 1200px){
 #block-block-3{
@@ -203,7 +203,9 @@ padding: 20px;
 margin: 0px;
 font-family: "Roboto",sans-serif;
 }
-
+#block-block-3 #contact-info p{
+font-size:16px;
+}
 
 
 
@@ -215,7 +217,7 @@ text-decoration:none;
 }
 
 #block-block-2 h2{
-color:#25aaa0;
+color:#00A2CA;
 font-size: 2.5em;
 margin:15px 0px 20px 0px;
 font-weight:bold;
@@ -245,7 +247,7 @@ position:absolute;
 width: 175px;
 font-size: 13px;
 margin-top: 24px;
-border-top: 2px solid #25aaa0;
+border-top: 2px solid #00A2CA;
 background: white;
 margin-left: -30px;
 }
@@ -315,7 +317,7 @@ padding-left:0px;
     content: "";
     left: 24px;
     position: absolute;
-    color:#25aaa0;
+    color:#00A2CA;
 }
 #main-main-menu .menu_tree ul{
 
@@ -379,7 +381,7 @@ margin-bottom:20px;
 
 #main-main-menu .activte{
 
-border-bottom:solid 2px #25aaa0;
+border-bottom:solid 2px #00A2CA;
 color:black;
  
 }
@@ -591,8 +593,8 @@ input, button, select, textarea {
     font-family: inherit;
 }
 input.form-submit, a.button {
-    background: #25aaa0;
-    background: -moz-linear-gradient(center top , #10958b 0%, #25aaa0 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    background: #00A2CA;
+    background: -moz-linear-gradient(center top , #10958b 0%, #00A2CA 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
     border: 1px solid #10958b;
     border-radius: 3px;
     box-sizing: border-box;
@@ -644,10 +646,16 @@ input.form-text, select.form-select, input.form-file, textarea.form-textarea {
     margin-top:10px;
 }
 
-.not-front #main-wrapper .tab-content .region-content #block-system-main ,#block-views-tracking-update-block {
+.not-front #main-wrapper .tab-content .region-content #block-system-main  {
     padding: 80px 10px 10px;
    
 }
+
+#block-views-tracking-update-block{
+    padding:10px;
+}
+
+
 
 label {
 display:block;
@@ -869,6 +877,7 @@ padding:10px;
 
 #edit-field-awb-number-value-wrapper label , #block-yeaoh-trace-search .form-item-awb-number label{
 float:left;
+margin-top: 4px;
 }
 #edit-field-awb-number-value-wrapper .views-widget ,#block-yeaoh-trace-search .form-type-textfield{
 float:left;

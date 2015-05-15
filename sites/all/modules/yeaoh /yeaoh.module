@@ -5,6 +5,10 @@ $edit = array('name' => $account->mail);
 return $edit;
 }
 
+
+ //print_r(drupal_mail_system('yeaoh', 'key'));exit;
+
+
 function yeaoh_form_comment_form_alter(&$form,&$form_state){
 
     if($form['#node']->type="awb_tracking"){
@@ -38,21 +42,49 @@ if(!empty($customer_email)){
 
 }
 
-  $site_mail = variable_get('site_mail');
+
    
   if(!empty($form_state['values']['field_notification'])){
      if($form_state['values']['field_notification']['und'][0]['value']==1){
 	
     foreach($arr as $mail){
-
-     $module = 'yeaoh_module';
-     $key = 'yeaoh_key';
+/*
+     $module = 'yeaoh';
+     $key = 'yeaoh';
      $language = language_default();
      $params = array(
       '@url' => url('node/' . $node->nid, array('absolute' => TRUE)),
       '@title' => $node->title,
     );
- 	  drupal_mail($module, $key, $mail, $language, $params);
+ 	  $message = drupal_mail($module, $key, $mail, $language, $params);
+
+*/
+
+
+	$my_module = 'yeaoh';
+	$my_mail_token = 'bar';
+	$from = variable_get('system_mail', 'zhong.liang@yeaoh.net');
+	$message = array(
+	  'id' => $my_module . '_' . $my_mail_token,
+	  'to' => $mail,
+	  'subject' => 'test',
+	  'body' => array('test'),
+	  'headers' => array(
+	    'From' => $from, 
+	    'Sender' => $from, 
+	    'Return-Path' => $from,
+	  ),
+	);
+	$system = drupal_mail_system($my_module, $my_mail_token);
+	$message = $system->format($message);
+
+	if ($system->mail($message)) {
+	  // Success.
+	  drupal_set_message('mail send Success!');
+	}
+	else {
+	  // Failure.
+	}
 
 
  	}
@@ -70,6 +102,7 @@ function yeaoh_mail($key, &$message, $params) {
   $message['body'] = array();
   $message['body'][] = t("Hello", $params);
   $message['body'][] = t("Node has been created @title (@url).", $params);
+
 }
 
 /**
@@ -258,7 +291,33 @@ function trace_noresult(){
 }
 
 
+function yeaoh_menu_local_tasks_alter(&$data, $router_item, $root_path) {
 
+  $nid = empty(arg(1))?0:arg(1);
+  $node = node_load($nid);
+  if($node!=null && $node->type == 'awb_tracking'){
 
+  $data ['tabs'][0]['output'][] = array(
+    '#theme' => 'menu_local_task',
+    '#link' => array(
+      'title' => t('Add Update'),
+      'href' => 'comment/reply/'.arg(1).'',
+      'localized_options' => array(
+        'attributes' => array(
+          'title' => t('Add Update'),
+        ),
+      ),
+    ),
+    // Define whether this link is active. This can be omitted for
+    // implementations that add links to pages outside of the current page
+    // context.
+   // '#active' => ($router_item ['path'] == $root_path),
+  );
+
+$data['tabs']['0']['count'] = $data['tabs']['0']['count'] + 1;
+
+}
+
+}
 
 
