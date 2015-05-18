@@ -1,0 +1,322 @@
+<?php
+//make registered email address become to the account name 
+function yeaoh_email_registration_name($edit, $account){
+$edit = array('name' => $account->mail);
+return $edit;
+}
+
+
+ //print_r(drupal_mail_system('yeaoh', 'key'));exit;
+
+
+function yeaoh_form_comment_form_alter(&$form,&$form_state){
+
+    if($form['#node']->type="awb_tracking"){
+      $form['#submit'][] = 'send_comment_email';
+    }
+
+}
+
+function send_comment_email(&$form,&$form_state){
+
+  $nid  = $form_state['values']['nid'];
+  $node = node_load($nid);
+   $arr = array();
+
+  if(!empty($node->field_user['und'][0])){
+   $customer = $node->field_user['und'][0]['user'];
+   $customer_email =  $customer->mail;
+   }
+    if(!empty($node->field_email['und'])){
+      foreach($node->field_email['und'] as $mails){
+	$arr[] = $mails['email'];
+      }
+
+    }
+
+
+if(!empty($customer_email)){
+  if(!in_array($customer_email,$arr)){
+     $arr[] = $customer_email;
+  }
+
+}
+
+
+   
+  if(!empty($form_state['values']['field_notification'])){
+     if($form_state['values']['field_notification']['und'][0]['value']==1){
+	
+    foreach($arr as $mail){
+/*
+     $module = 'yeaoh';
+     $key = 'yeaoh';
+     $language = language_default();
+     $params = array(
+      '@url' => url('node/' . $node->nid, array('absolute' => TRUE)),
+      '@title' => $node->title,
+    );
+ 	  $message = drupal_mail($module, $key, $mail, $language, $params);
+
+*/
+
+
+	$my_module = 'yeaoh';
+	$my_mail_token = 'bar';
+	$from = variable_get('system_mail', 'zhong.liang@yeaoh.net');
+	$message = array(
+	  'id' => $my_module . '_' . $my_mail_token,
+	  'to' => $mail,
+	  'subject' => 'test',
+	  'body' => array('test'),
+	  'headers' => array(
+	    'From' => $from, 
+	    'Sender' => $from, 
+	    'Return-Path' => $from,
+	  ),
+	);
+	$system = drupal_mail_system($my_module, $my_mail_token);
+	$message = $system->format($message);
+
+	if ($system->mail($message)) {
+	  // Success.
+	  drupal_set_message('mail send Success!');
+	}
+	else {
+	  // Failure.
+	}
+
+
+ 	}
+
+     }
+  }
+
+}
+
+/**
+ * Implements hook_mail().
+ */
+function yeaoh_mail($key, &$message, $params) {
+  $message['subject'] = t("@title event registration confirmation", $params);
+  $message['body'] = array();
+  $message['body'][] = t("Hello", $params);
+  $message['body'][] = t("Node has been created @title (@url).", $params);
+
+}
+
+/**
+* Implements hook_block_info().
+*/
+function yeaoh_block_info() {
+  $blocks['trace_search'] = array(
+    'info' => t('Trace Your Air Waybill'),
+    'region'=>-1,
+  );
+
+  return $blocks;
+}
+
+function yeaoh_menu(){
+
+   $items['trace/noresult'] = array(
+     'page callback' => 'trace_noresult',
+     'access callback' =>true,
+     'title'=>t('Trace Your Air Waybill'),
+  );
+
+   $items['trace/result/%'] = array(
+     'page callback' => 'trace_result',
+     'access callback' =>true,
+     'title'=>t('Trace Your Air Waybill'),
+  );
+
+ return $items;
+}
+
+
+
+/**
+* Implements hook_block_view().
+*/
+function yeaoh_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'trace_search':
+      $block['title'] = t('Trace Your Air Waybill');
+      $block['content'] = drupal_get_form('trace_form');
+      break;
+  }
+  return $block;
+}
+
+function trace_form($form, &$form_state){
+ $form['awb_prefix'] = array(
+   '#type'=>'textfield',
+   '#title'=>t('Enter Air Waybill Prefix and number here:'), 
+   '#size'=>15,
+   '#maxlength'=>128,
+ );
+
+ $form['awb_number'] = array(
+   '#type'=>'textfield',
+   '#title'=>t('-'), 
+   '#size'=>15,
+   '#maxlength'=>128,
+ );
+ $form['title'] = array(
+   '#type'=>'textfield',
+   '#title'=>t('Or Full AWB Number here:'), 
+   '#size'=>15,
+   '#maxlength'=>128,
+ );
+
+ $form['submit'] = array(
+   '#type'=>'submit',
+   '#value'=>t('Trace'),   
+ );
+
+ return $form;
+}
+
+function trace_form_submit(&$form, &$form_state){
+
+  $prefix = $form_state['values']['awb_prefix'];
+  $number = $form_state['values']['awb_number'];
+  $title = $form_state['values']['title'];
+  $result = '';
+
+ if($title=='' &&$prefix=='' && $number==''){
+    $form_state['redirect'] = 'trace/noresult';
+    return;
+ }elseif($title!='' &&$prefix=='' && $number==''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$title,
+	':type'=>'awb_tracking'
+	));
+   $result = $title;
+ }elseif($title!='' &&$prefix!='' && $number!=''){
+
+    $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1 or title =:awb',array(
+	':title'=>$title,
+	':type'=>'awb_tracking',
+	':awb'=>$prefix.$number,
+	));
+
+   $result = $title.'&'.$prefix.$number;
+
+ }elseif($title=='' &&$prefix!='' && $number!=''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$prefix.$number,
+	':type'=>'awb_tracking'
+	));
+   $result = $prefix.$number;
+
+ }elseif($title=='' &&$prefix!='' && $number==''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$prefix,
+	':type'=>'awb_tracking'
+       ));
+   $result = $prefix;
+
+ }elseif($title=='' &&$prefix=='' && $number!=''){
+  $nids =  db_query('select nid from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>$number,
+	':type'=>'awb_tracking'
+       ));
+   $result = $number;
+
+ }
+
+
+$str_nid = '';
+$count = 0; 
+foreach($nids as $nid){
+ $str_nid = $nid->nid;
+$count++;
+}
+
+ if($str_nid==''){
+     $form_state['redirect'] = 'trace/noresult';
+     return;
+ }
+
+  if($count == 1){
+     $form_state['redirect'] = 'node/'.$str_nid;
+   }else{
+     $form_state['redirect'] = 'trace/result/'.$result;
+   }
+
+ 
+
+
+}
+
+
+function trace_result(){
+
+
+  if(strpos(arg(2),'&')){
+
+  $arr = explode('&',arg(2));
+
+
+  $nids =  db_query('select * from {node} where title = :title or title =:title1 and type = :type and status = 1',array(
+	':title'=>$arr[0],
+	':title1'=>$arr[1],
+	':type'=>'awb_tracking'
+	));
+  }else{
+  $nids =  db_query('select * from {node} where title = :title and type = :type and status = 1',array(
+	':title'=>arg(2),
+	':type'=>'awb_tracking'
+	));
+ }
+$output = '';
+
+foreach($nids as $nid){
+   $output .= '<div><a href="/node.'.$nid->nid.'">'.$nid->title.'</a></div>';
+}
+
+return $output;
+
+}
+
+function trace_noresult(){
+
+     $output = '<p>There is no data matching your input and criterion. Please correct and check again. If you think you receive this message by error, please <a href="/contact">contact us</a></p>';
+
+ return $output;
+
+}
+
+
+function yeaoh_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  $nid = empty(arg(1))?0:arg(1);
+  $node = node_load($nid);
+  if($node!=null && $node->type == 'awb_tracking'){
+
+  $data ['tabs'][0]['output'][] = array(
+    '#theme' => 'menu_local_task',
+    '#link' => array(
+      'title' => t('Add Update'),
+      'href' => 'comment/reply/'.arg(1).'',
+      'localized_options' => array(
+        'attributes' => array(
+          'title' => t('Add Update'),
+        ),
+      ),
+    ),
+    // Define whether this link is active. This can be omitted for
+    // implementations that add links to pages outside of the current page
+    // context.
+   // '#active' => ($router_item ['path'] == $root_path),
+  );
+
+$data['tabs']['0']['count'] = $data['tabs']['0']['count'] + 1;
+
+}
+
+}
+
+
