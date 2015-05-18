@@ -6,9 +6,6 @@ return $edit;
 }
 
 
- //print_r(drupal_mail_system('yeaoh', 'key'));exit;
-
-
 function yeaoh_form_comment_form_alter(&$form,&$form_state){
 
     if($form['#node']->type="awb_tracking"){
