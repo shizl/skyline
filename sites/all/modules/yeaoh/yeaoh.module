@@ -289,7 +289,9 @@ function trace_noresult(){
 
 
 function yeaoh_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  $nid = empty(arg(1))?0:arg(1);
+ 
+  $parm = arg(1);
+  $nid = empty($parm)?0:$parm;
   $node = node_load($nid);
   if($node!=null && $node->type == 'awb_tracking'){
 
