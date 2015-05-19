@@ -46,7 +46,8 @@ tr.odd {
 }
 img {
   outline: 0;
-  
+  max-width:100%;
+ height:auto;
 }
 #logo img{
  width: 127px;
