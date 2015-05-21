@@ -1,7 +1,8 @@
+    <link href="/sites/all/themes/skyline/css/responsive-slider.css" rel="stylesheet">
+
 <div id="page-wrapper"><div id="page">
 
   <div id="header" class="<?php print $secondary_menu ? 'with-secondary-menu': 'without-secondary-menu'; ?>">
-<a  class="hide_menu" title="Hide navigation" href="#">Hide navigation</a>
 <div class="section clearfix">
 
     <?php if ($logo): ?>
@@ -80,6 +81,7 @@
 
    <div id="login_register" > 
     <ul>
+    <li><a class="hide_menu" title="Hide navigation" href="#"> Menu <br> <i class="icon-list icon-2x"></i></a></li>
     <li  class="menu first"> <a href="/user"><?php echo $user->uid==0?'Login':'My account' ?>  <br><i class="icon-signin icon-2x"></a></i></li>
     <li  class="menu last"> <a href="<?php echo $user->uid ==0?'/user/register':'/user/logout' ?>"><?php echo $user->uid ==0 ?'Register':'Logout' ?><br><i class="icon-user icon-2x"></i></a> </li>
     </ul>
@@ -104,7 +106,39 @@
 
   <?php if($page['banner']):  ?>
     <div id="banner"><div class="section clearfix">
-	<?php print render($page['banner']); ?>	
+	<?php //print render($page['banner']); ?>	
+
+
+<div class="responsive-slider" data-spy="responsive-slider" data-autoplay="true">
+        <div class="slides" data-group="slides">
+      		<ul>
+
+	 <?php 
+	   $fids = db_query("select field_image_fid from {field_data_field_image} where bundle = 'slider' and entity_type = 'node' ");
+	  
+		foreach($fids as $fid){
+		   $file = file_load($fid->field_image_fid);
+		   $url = file_create_url($file->uri);
+
+		   echo '<li>
+              		<div class="slide-body" data-group="slide">
+                	<img src="'.$url.'">
+              		</div>
+  	    		</li>';
+		}
+
+ 	?>
+  	    	</ul>
+        </div>
+
+        <div class="pages">
+          <a class="page" href="#" data-jump-to="1">1</a>
+          <a class="page" href="#" data-jump-to="2">2</a>
+          <a class="page" href="#" data-jump-to="3">3</a>
+        </div>
+    	</div>
+
+
     </div></div>
   <?php endif;?>
 
@@ -151,3 +185,9 @@
   </div></div> <!-- /.section, /#footer-wrapper -->
 
 </div></div> <!-- /#page, /#page-wrapper -->
+
+    <script src="/sites/all/themes/skyline/js/jquery.js"></script>
+    <script src="/sites/all/themes/skyline/js/jquery.event.move.js"></script>
+    <script src="/sites/all/themes/skyline/js/responsive-slider.js"></script>
+
+

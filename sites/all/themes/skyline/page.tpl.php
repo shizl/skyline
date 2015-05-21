@@ -77,6 +77,7 @@
 
    <div id="login_register" > 
     <ul>
+    <li><a class="hide_menu" title="Hide navigation" href="#"> Menu <br> <i class="icon-list icon-2x"></i></a></li>
     <li  class="menu first"> <a href="/user"><?php echo $user->uid==0?'Login':'My account' ?>  <br><i class="icon-signin icon-2x"></a></i></li>
     <li  class="menu last"> <a href="<?php echo $user->uid ==0?'/user/register':'/user/logout' ?>"><?php echo $user->uid ==0 ?'Register':'Logout' ?><br><i class="icon-user icon-2x"></i></a> </li>
     </ul>

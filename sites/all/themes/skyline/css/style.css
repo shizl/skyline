@@ -344,13 +344,6 @@ display:block;
 }
 
 .hide_menu{
-  background: url("../images/nav_icon.png") repeat scroll 2px center rgba(0, 0, 0, 0.5);
-    font-size: 12px;
-    height: 32px;
-    position: absolute;
-    text-align: left;
-    text-indent: -9999px;
-    width: 32px;
    display:none;
 }
 @media (max-width: 815px){
@@ -364,7 +357,12 @@ display:none;
 
 }
 
+@media (min-width: 815px){
+#main-main-menu {
+display:block !important;
+}
 
+}
 
 @media (max-width: 1200px){
 #main-main-menu {
@@ -920,6 +918,10 @@ width:100%;
 }
 #block-yeaoh-trace-search label{
 font-weight:bold;
+}
+
+.group-details .field-collection-container{
+margin-top:15px;
 }
 
 

@@ -20,24 +20,27 @@ function send_comment_email(&$form,&$form_state){
   $node = node_load($nid);
    $arr = array();
 
-  if(!empty($node->field_user['und'][0])){
+  if(!empty($node->field_user['und'][0]['user'])){
    $customer = $node->field_user['und'][0]['user'];
    $customer_email =  $customer->mail;
+	  if(!in_array($customer_email,$arr)){
+	     $arr[] = $customer_email;
+	  }
    }
+
     if(!empty($node->field_email['und'])){
       foreach($node->field_email['und'] as $mails){
-	$arr[] = $mails['email'];
+
+	  if(!in_array($mails['email'],$arr)){
+		$arr[] = $mails['email'];
+	  }
+
       }
 
     }
 
 
-if(!empty($customer_email)){
-  if(!in_array($customer_email,$arr)){
-     $arr[] = $customer_email;
-  }
 
-}
 
 
    
@@ -119,6 +122,10 @@ function yeaoh_block_view($delta = '') {
 }
 
 function trace_form($form, &$form_state){
+
+
+ drupal_add_js('jQuery(document).ready(function () { jQuery("#clear").click(function(){  jQuery("#trace-form .form-text").val("")}); });', 'inline');
+
  $form['awb_prefix'] = array(
    '#type'=>'textfield',
    '#title'=>t('Enter Air Waybill Prefix and number here:'), 
@@ -143,6 +150,12 @@ function trace_form($form, &$form_state){
    '#type'=>'submit',
    '#value'=>t('Trace'),   
  );
+
+ $form['clear'] = array(
+   '#markup'=>'<input  type="button" value="clear" class="form-submit" name="clear" id="clear" />',
+ );
+
+
 
  return $form;
 }
