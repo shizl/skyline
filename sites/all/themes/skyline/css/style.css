@@ -260,6 +260,7 @@ display: block;
 
 background: none repeat scroll 0% 0% #FFF;
 }
+
 #main-main-menu .menu_tree a{
 
 }
@@ -270,6 +271,22 @@ margin-left: -30px;
 width: 175px;
 min-height: 30px;
 }
+
+
+
+@media (max-width: 500px){
+#main-main-menu .menu_tree{
+width:145px;
+margin-left:0px;
+}
+
+#main-main-menu .menu_tree li{
+width:145px;
+}
+
+}
+
+
 .menu_tree_tree span{
 display:none;
 }
