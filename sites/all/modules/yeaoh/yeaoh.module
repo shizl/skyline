@@ -9,6 +9,9 @@ return $edit;
 function yeaoh_form_comment_form_alter(&$form,&$form_state){
 
     if($form['#node']->type="awb_tracking"){
+
+
+
       $form['#submit'][] = 'send_comment_email';
     }
 
@@ -75,7 +78,7 @@ function send_comment_email(&$form,&$form_state){
       '@comments'=>$form_state['values']['field_comments']['und'][0]['value'],
       '@kilos'=>$form_state['values']['field_kilos']['und'][0]['value'],
       '@date'=>$form_state['values']['field_date_time']['und'][0]['value'],
-
+      '@receiver_email' =>$mail,
     );
  	  $message = drupal_mail($module, $key, $mail, $language, $params);
 
@@ -102,6 +105,7 @@ function yeaoh_mail($key, &$message, $params) {
   $message['body'][] = t("Comments: @comments", $params);
 
   $message['body'][] = t("For more information please visit @url. If you have any question regarding this update or any inquiry please contact us at @email", $params);
+  $message['body'][] = t("This message is intended for the following e-mail address: @receiver_email. If this message is not for you, please delete it.", $params);
 
 
 }
@@ -133,6 +137,12 @@ function yeaoh_menu(){
   );
 
  return $items;
+}
+
+function yeaoh_menu_alter(&$items){
+
+ $items['comment/reply/%node']['title'] = 'Add new track line';
+
 }
 
 
@@ -312,11 +322,11 @@ function yeaoh_menu_local_tasks_alter(&$data, $router_item, $root_path) {
   $data ['tabs'][0]['output'][] = array(
     '#theme' => 'menu_local_task',
     '#link' => array(
-      'title' => t('Add Update'),
+      'title' => t('Track'),
       'href' => 'comment/reply/'.arg(1).'',
       'localized_options' => array(
         'attributes' => array(
-          'title' => t('Add Update'),
+          'title' => t('Track'),
         ),
       ),
     ),
