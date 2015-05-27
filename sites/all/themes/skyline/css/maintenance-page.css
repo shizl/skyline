@@ -3,6 +3,20 @@ body.maintenance-page {
   background-color: #fff;
   color: #000;
 }
+img{
+
+height:70px;
+
+}
+.maintenance-page #logo{
+
+margin-left:35px;
+}
+
+.maintenance-page #content{
+
+margin-left:35px;
+}
 .maintenance-page #wrapper {
   background: #fff;
   margin-left: auto;
@@ -16,8 +30,9 @@ body.maintenance-page {
 .maintenance-page #page {
   margin: 20px 40px 40px;
 }
-.maintenance-page #main-wrapper {
+.maintenance-page #container {
   min-height: inherit;
+  margin-bottom: 35px;
 }
 .maintenance-page #header,
 .maintenance-page #messages,
@@ -28,8 +43,8 @@ body.maintenance-page {
 .maintenance-page #main {
   width: 700px;
 }
-.maintenance-page #main {
-  margin: 0;
+.maintenance-page #content {
+  margin-left:35px;
 }
 .maintenance-page #content .section {
   padding: 0 0 0 10px;
@@ -37,6 +52,7 @@ body.maintenance-page {
 .maintenance-page #header {
   background-color: #fff;
   background-image: none;
+  height:120px;
 }
 .maintenance-page #name-and-slogan {
   margin-bottom: 50px;
@@ -53,6 +69,8 @@ body.maintenance-page {
 .maintenance-page  h1#page-title {
   line-height: 1em;
   margin-top: 0;
+  font-size:1.7em;
+  font-weight: inherit;
 }
 .maintenance-page #messages {
   padding: 0;
