@@ -15,7 +15,7 @@
 <head>
   <?php print $head; ?>
   <title><?php print $head_title; ?></title>
-  <link rel="stylesheet" type="text/css" href="../css/maintenance.css">
+  <link rel="stylesheet" type="text/css" href="sites/all/themes/skyline/css/maintenance-page.css">
   <?php print $scripts; ?>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>

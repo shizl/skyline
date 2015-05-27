@@ -3,7 +3,7 @@ body.maintenance-page {
   background-color: #fff;
   color: #000;
 }
-.maintenance-page #page-wrapper {
+.maintenance-page #wrapper {
   background: #fff;
   margin-left: auto;
   margin-right: auto;
