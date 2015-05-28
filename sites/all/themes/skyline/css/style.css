@@ -855,10 +855,12 @@ line-height:40px;
 
 #block-views-exp-tracking-box-page .content, #block-yeaoh-trace-search .content{
 background:#f5f5f5;
-padding:20px;
+padding:20px 20px 30px 20px;
 }
 
-
+ #block-yeaoh-trace-search .content .form-item-title{
+margin-bottom:20px;
+}
 #views-exposed-form-tracking-box-page #edit-field-awb-number-value ,#block-yeaoh-trace-search #edit-awb-number{
 width:196px;
 float:left;

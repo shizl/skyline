@@ -96,7 +96,7 @@ function yeaoh_mail($key, &$message, $params) {
   $message['subject'] = t("Your AWB @title has been updated", $params);
   $message['body'] = array();
   $message['body'][] = t('Your AWB @title has been updated as followed:',$params);
-  $message['body'][] = t("From: @from", $params);
+  $message['body'][] = t("Trace from: @from", $params);
   $message['body'][] = t("To: @to", $params);
   $message['body'][] = t("Status: @status", $params);
   $message['body'][] = t("Kilos: @kilos kgs", $params);

@@ -1,4 +1,5 @@
-    <link href="/sites/all/themes/skyline/css/responsive-slider.css" rel="stylesheet">
+<?php  render($page['content']);  ?>
+<link href="/sites/all/themes/skyline/css/responsive-slider.css" rel="stylesheet">
 
 <div id="page-wrapper"><div id="page">
 
