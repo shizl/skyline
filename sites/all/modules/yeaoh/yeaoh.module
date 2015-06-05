@@ -6,16 +6,39 @@ return $edit;
 }
 
 
-function yeaoh_form_comment_form_alter(&$form,&$form_state){
+function yeaoh_form_comment_form_alter(&$form,&$form_state,$form_id){
 
     if($form['#node']->type="awb_tracking"){
 
-
-
+      $nid = $form['#node']->nid;
+      $cid = db_query('select cid from {comment}  where nid =:nid  order by cid desc LIMIT 0 , 1',array(':nid'=>$nid))->fetchfield();
+      $comment = comment_load($cid);
+      $form['field_from']['und'][0]['value']['#default_value'] = $comment->field_from['und'][0]['value'];
+      $form['field_to']['und'][0]['value']['#default_value'] = $comment->field_to['und'][0]['value'];
+      $form['field_pieces']['und'][0]['value']['#default_value'] = $comment->field_pieces['und'][0]['value'];
+      $form['field_kilos']['und'][0]['value']['#default_value'] = $comment->field_kilos['und'][0]['value'];
+      $form['field_comments']['und'][0]['value']['#default_value'] = empty($comment->field_comments['und'][0]['value'])?'':$comment->field_comments['und'][0]['value'];
+      $form['field_date_time']['und'][0]['value']['#default_value'] = $comment->field_date_time['und'][0]['value'];
+      $form['field_status']['und']['#default_value'] = $comment->field_status['und'];
+      //echo'<pre>'; print_r($comment); exit;
       $form['#submit'][] = 'send_comment_email';
+      $form['#submit'][] = 'yeaoh_comments_comments_form_submit';
+
+  
     }
 
 }
+ function yeaoh_comments_comments_form_submit($form, &$form_state){
+   //echo'<pre>'; print_r($form_state['values']); exit;
+   $idd=$form_state['values']['subject'];
+    if(arg(2)=="edit"){
+   drupal_set_message("Tracking line $idd has been updated");
+  }
+   else {
+    drupal_set_message("Tracking line $idd has been created");
+}
+}
+
 
 function send_comment_email(&$form,&$form_state){
 

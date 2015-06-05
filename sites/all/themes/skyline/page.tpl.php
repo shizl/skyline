@@ -40,7 +40,7 @@
 		            // }else{
                                 //$menu_tree_tree = '<div class="menu_tree_tree"><ul>'.$child_child_name.'</ul></div>';
 		              //}
-			if($child_menu!=null){
+			if($child_menu!=null&&drupal_valid_path($child_menu->link_path)){
                             $child_name .= '<li><a  href="/'.$child_menu->link_path.'">'.$child_menu->link_title.'</a>'.$menu_tree_tree.'</li>';
 			}
                      
@@ -128,7 +128,15 @@
  	<?php  print render($tabs) ;?>
 	 </div>
 	<?php endif ; ?>
-  <h2 class="page-title"><?php print $title; ?></h2>
+  <h2 class="page-title"><?php 
+
+          if(arg(0)=='comment'&& arg(2) =='edit'){
+	    print str_replace ("Edit comment","", $title);	
+          }
+       else{
+	 print $title;
+}
+ ?></h2>
 
 	<?php print render($page['content']); ?>
 

@@ -25,11 +25,15 @@
 
 
           foreach ($menus as $menu) {
+
+
             if (!empty($menu['#original_link']['link_path'])) {
                 $menu_tree = '';
  	   	$child_menus = db_query('select * from {menu_links} where plid ='.$menu['#original_link']['mlid']);
 		$child_name = '';
 		foreach($child_menus as $child_menu){
+
+			
 	                   $menu_tree_tree = '';
                            //$child_child_name="";
                            //$child_child_menus = db_query('select * from {menu_links} where plid ='.$child_menu->mlid);
@@ -44,7 +48,7 @@
 		             //}else{
                                 //$menu_tree_tree = '<div class="menu_tree_tree"><ul>'.$child_child_name.'</ul></div>';
 		              //}
-			if($child_menu!=null){
+			if($child_menu!=null && drupal_valid_path($child_menu->link_path)){
                             $child_name .= '<li><a  href="'.$child_menu->link_path.'">'.$child_menu->link_title.'</a>'.$menu_tree_tree.'</li>';
 			}
                      
