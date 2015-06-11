@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the Module Overrides module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function message_overrides_schema() {
+  return array(
+    'message_overrides' => array(
+      'description' => 'Store message overrides for specific forms.',
+      'fields' => array(
+        'fid' => array(
+          'description' => 'Primary key. Unique database form ID.',
+          'type' => 'serial',
+          'size' => 'normal',
+          'not null' => TRUE,
+          'unsigned' => TRUE,
+        ),
+        'drupal_form_id' => array(
+          'description' => 'Drupal system form ID.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+        ),
+        'description' => array(
+          'description' => 'Optional form description used for readability only.',
+          'type' => 'varchar',
+          'length' => 128,
+        ),
+        'overrides' => array(
+          'description' => 'Actual list of the overrides for the form ID.',
+          'type' => 'text',
+          'size' => 'normal',
+          'serialize' => TRUE,
+        ),
+      ),
+      'primary key' => array('fid'),
+      'indexes' => array(
+        'form_id' => array('drupal_form_id'),
+      ),
+    ),
+  );
+}

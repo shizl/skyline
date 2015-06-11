@@ -1,0 +1,352 @@
+<?php
+
+/**
+ * @file
+ * Message Overrides module's hooks and functions.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function message_overrides_permission() {
+  return array(
+    'administer message overrides' => array(
+      'title' => t('Administer message overrides'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function message_overrides_menu() {
+  return array(
+    'admin/config/user-interface/message-overrides' => array(
+      'title' => 'Message overrides',
+      'type' => MENU_NORMAL_ITEM,
+      'access arguments' => array('administer message overrides'),
+      'page callback' => 'message_overrides_list',
+    ),
+    'admin/config/user-interface/message-overrides/list' => array(
+      'title' => 'List',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+    ),
+    'admin/config/user-interface/message-overrides/add' => array(
+      'title' => 'Add form',
+      'type' => MENU_LOCAL_TASK,
+      'access arguments' => array('administer message overrides'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('message_overrides_form_edit_override', NULL),
+      'weight' => 1,
+    ),
+    'admin/config/user-interface/message-overrides/edit/%' => array(
+      'title' => 'Edit form',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('administer message overrides'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('message_overrides_form_edit_override', 5),
+    ),
+    'admin/config/user-interface/message-overrides/delete/%' => array(
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('administer message overrides'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('message_overrides_form_delete_override', 5),
+    ),
+  );
+}
+
+/**
+ * Confirm deletion of the override.
+ */
+function message_overrides_form_delete_override($form, &$form_state, $fid) {
+  // Fetch the override.
+  $form_override = db_select('message_overrides', 'mo')
+    ->fields('mo')
+    ->condition('fid', $fid, '=')
+    ->execute()
+    ->fetchObject();
+
+  // Build the form.
+  $form['fid'] = array(
+    '#type' => 'value',
+    '#value' => $fid,
+  );
+  $form['drupal_form_id'] = array(
+    '#type' => 'value',
+    '#value' => $form_override->drupal_form_id,
+  );
+
+  return confirm_form($form, t('Are you sure you want to delete %form_id?',
+    array('%form_id' => $form_override->drupal_form_id)),
+    'admin/config/user-interface/message-overrides/list'
+  );
+}
+
+/**
+ * Delete the override when it is confirmed.
+ */
+function message_overrides_form_delete_override_submit($form, &$form_state) {
+  db_delete('message_overrides')
+    ->condition('fid', $form_state['values']['fid'])
+    ->execute();
+
+  drupal_set_message(t('The override of %form_id has been deleted.', array(
+    '%form_id' => $form_state['values']['drupal_form_id'])));
+
+  $form_state['redirect'] = 'admin/config/user-interface/message-overrides/list';
+}
+
+/**
+ * Transform message overrides to the textual representation.
+ */
+function message_overrides_array_to_string($overrides_array) {
+  $strings_overrides = '';
+
+  foreach ($overrides_array as $row) {
+    $strings_overrides .= $row['string'] . '|' . $row['replacement'] . "\n";
+  }
+
+  return $strings_overrides;
+}
+
+/**
+ * Transform message overrides strings to array.
+ */
+function message_overrides_string_to_array($overrides_string) {
+  $strings_array = array();
+
+  $strings_overrides = explode("\n", trim($overrides_string));
+  foreach ($strings_overrides as $row) {
+    $override = explode('|', trim($row));
+    if (is_array($override) && count($override) == 2) {
+      $regex = preg_quote(trim($override[0]), '/');
+      $regex = preg_replace('/([^\\\]|^)(\\\){1}\*/', '$1.*?', $regex);
+      $regex = preg_replace('/(\\\){3}\*/', '\*', $regex);
+      $strings_array[] = array(
+        'string' => trim($override[0]),
+        'replacement' => trim($override[1]),
+        'regex' => "/^$regex$/",
+      );
+    }
+  }
+
+  return $strings_array;
+}
+
+/**
+ * List all available overrides in a nice table.
+ */
+function message_overrides_list() {
+  // Fetch all available overrides.
+  $results = db_select('message_overrides', 'mo')
+    ->fields('mo')
+    ->execute()
+    ->fetchAll();
+
+  // Initialize table.
+  $table = array(
+    'header' => array(
+      t('Drupal form ID'),
+      t('Description'),
+      t('Actions'),
+    ),
+    'empty' => t('Add a form override to see something there!'),
+    'rows' => array(),
+  );
+
+  // Fill in table rows.
+  foreach ($results as $row) {
+    $table['rows'][] = array(
+      $row->drupal_form_id,
+      $row->description,
+      implode(' | ', array(
+        l(t('edit'), 'admin/config/user-interface/message-overrides/edit/' . $row->fid),
+        l(t('delete'), 'admin/config/user-interface/message-overrides/delete/' . $row->fid),
+      )),
+    );
+  }
+
+  return theme('table', $table);
+}
+
+/**
+ * Form to add/edit an override for any form.
+ */
+function message_overrides_form_edit_override($form, &$form_state, $fid) {
+  // The object is empty by default.
+  $form_override = FALSE;
+
+  // String with overriden messages.
+  $strings_overrides = '';
+  if ($fid) {
+    // Fetch the override.
+    $form_override = db_select('message_overrides', 'mo')
+      ->fields('mo')
+      ->condition('fid', $fid, '=')
+      ->execute()
+      ->fetchObject();
+
+    // Convert array to text representation.
+    if ($overrides_array = unserialize($form_override->overrides)) {
+      $strings_overrides = message_overrides_array_to_string($overrides_array);
+    }
+  }
+
+  // Build the form.
+  $form['fid'] = array(
+    '#type' => 'value',
+    '#value' => $fid,
+  );
+  $form['drupal_form_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Form ID'),
+    '#description' => t('System form ID, e.g. <strong>user_register_form</strong>.'),
+    '#required' => TRUE,
+    '#maxlength' => 255,
+    '#default_value' => $form_override ? $form_override->drupal_form_id : '',
+  );
+  $form['description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Description'),
+    '#description' => t('Optional description to be displayed in the UI.'),
+    '#maxlength' => 128,
+    '#default_value' => $form_override ? $form_override->description : '',
+  );
+  $form['overrides'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Message overrides'),
+    '#required' => TRUE,
+    '#description' => t("Specify overrides in the following format:
+      <strong>string to override</strong>|<strong>replacement</strong>.
+      Use &lt;none&gt; to disable the message. Use '*' as a wildcard.
+      Separate overrides by new lines."),
+    '#default_value' => $strings_overrides,
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  if ($form_override) {
+    $form['delete'] = array(
+      '#type' => 'submit',
+      '#value' => t('Delete'),
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Submit handler for the message override add/edit form.
+ */
+function message_overrides_form_edit_override_submit(&$form, &$form_state) {
+  // Convert user input to an array.
+  $strings_array = message_overrides_string_to_array($form_state['values']['overrides']);
+
+  // Build database row.
+  $form_override = array(
+    'fid' => $form_state['values']['fid'],
+    'drupal_form_id' => $form_state['values']['drupal_form_id'],
+    'description' => $form_state['values']['description'],
+    'overrides' => $strings_array,
+  );
+
+  // Update or insert the row depending on "fid" value.
+  if ($form_override['fid']) {
+    $query_status = drupal_write_record('message_overrides', $form_override, 'fid');
+  }
+  else {
+    $query_status = drupal_write_record('message_overrides', $form_override);
+  }
+
+  // Display status message to the user.
+  switch ($query_status) {
+    case SAVED_NEW:
+      drupal_set_message(t('Added an override for @form_id.', array(
+        '@form_id' => $form_override['drupal_form_id'],
+      )));
+      break;
+
+    case SAVED_UPDATED:
+      drupal_set_message(t('Updated the override for @form_id.', array(
+        '@form_id' => $form_override['drupal_form_id'],
+      )));
+      break;
+
+    default:
+      drupal_set_message(t('Failed to insert/update the override @form_id.', array(
+        '@form_id' => $form_override['drupal_form_id'],
+      )), 'error');
+      break;
+  }
+
+  $form_state['redirect'] = 'admin/config/user-interface/message-overrides/list';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function message_overrides_form_alter(&$form, &$form_state, $form_id) {
+  // Try to find the override for the $form_id.
+  $form_override = db_select('message_overrides', 'mo')
+    ->fields('mo')
+    ->condition('drupal_form_id', $form_id)
+    ->execute()
+    ->fetchObject();
+
+  if ($form_override) {
+    $form['#validate'][] = 'message_overrides_form_validate';
+    $form['#submit'][] = 'message_overrides_form_submit';
+  }
+}
+
+/**
+ * Process status messages after the form was validated by other modules.
+ */
+function message_overrides_process_messages($form_id) {
+  // Try to find the override for the $form_id.
+  $form_override = db_select('message_overrides', 'mo')
+    ->fields('mo')
+    ->condition('drupal_form_id', $form_id)
+    ->execute()
+    ->fetchObject();
+
+  if ($form_override) {
+    // Unserialize the overrides array.
+    $messages = drupal_set_message();
+    if (is_array($messages) && $overrides_array = unserialize($form_override->overrides)) {
+      // Check if any message matches our list.
+      foreach (array_keys($messages) as $msg_type) {
+        $dirty = FALSE;
+        foreach ($messages[$msg_type] as $index => $message) {
+          foreach ($overrides_array as $row) {
+            // Check if message matches regexp and replace it if it do.
+            if (preg_match($row['regex'], $message)) {
+              $messages[$msg_type][$index] = ($row['replacement'] == '<none>') ? '' : $row['replacement'];
+              $dirty = TRUE;
+            }
+          }
+        }
+        if ($dirty) {
+          $messages[$msg_type] = array_unique($messages[$msg_type]);
+          $_SESSION['messages'][$msg_type] = $messages[$msg_type];
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Validate form handler.
+ */
+function message_overrides_form_validate(&$form, &$form_state) {
+  message_overrides_process_messages($form['#form_id']);
+}
+
+/**
+ * Submit form handler.
+ */
+function message_overrides_form_submit(&$form, &$form_state) {
+  message_overrides_process_messages($form['#form_id']);
+}

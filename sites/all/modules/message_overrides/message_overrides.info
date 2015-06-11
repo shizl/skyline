@@ -1,0 +1,12 @@
+name = Message Overrides
+description = Allow to override status messages.
+core = 7.x
+package = Other
+configure = admin/config/user-interface/message-overrides
+
+; Information added by Drupal.org packaging script on 2014-10-02
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "message_overrides"
+datestamp = "1412238830"
+
