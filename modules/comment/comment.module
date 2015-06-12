@@ -2198,7 +2198,8 @@ function comment_submit($comment) {
     // 3) Convert entities back to plain-text.
     $field = field_info_field('comment_body');
     $langcode = field_is_translatable('comment', $field) ? entity_language('comment', $comment) : LANGUAGE_NONE;
-    $comment_body = $comment->comment_body[$langcode][0];
+	
+    $comment_body = isset($comment->comment_body[$langcode][0])?$comment->comment_body[$langcode][0]:'';
     if (isset($comment_body['format'])) {
       $comment_text = check_markup($comment_body['value'], $comment_body['format']);
     }
