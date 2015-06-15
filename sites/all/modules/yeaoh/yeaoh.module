@@ -39,7 +39,7 @@ function yeaoh_form_comment_form_alter(&$form,&$form_state,$form_id){
   if(arg(2)=="edit"){
    drupal_set_message("Tracking line ".$idd." has been updated");
   }else{
-    drupal_set_message("Tracking line ".$idd." has been created");
+    drupal_set_message("Tracking line has been created");
   }
 
  
