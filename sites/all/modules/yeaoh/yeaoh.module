@@ -39,7 +39,7 @@ function yeaoh_form_comment_form_alter(&$form,&$form_state,$form_id){
   if(arg(2)=="edit"){
    drupal_set_message("Tracking line ".$idd." has been updated");
   }else{
-    drupal_set_message("Tracking line has been created");
+    drupal_set_message("A new tracking line has been created");
   }
 
  
@@ -341,7 +341,7 @@ return $output;
 
 function trace_noresult(){
 
-     $output = '<p>There is no data matching your input and criterion. Please correct and check again. If you think you receive this message by error, please <a href="/contact">contact us</a></p>';
+     $output = '<p>There is no data matching your input and criterion. Please correct and check again. If you think you receive this message by error, please <a href="/node/91">contact us</a></p>';
 
  return $output;
 
