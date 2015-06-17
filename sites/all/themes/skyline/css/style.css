@@ -892,7 +892,10 @@ padding:10px;
  margin-top: -41px;
 
 }
+#comment-body-add-more-wrapper{
 
+display:none;
+}
 
 #edit-field-awb-number-value-wrapper label , #block-yeaoh-trace-search .form-item-awb-number label{
 float:left;
