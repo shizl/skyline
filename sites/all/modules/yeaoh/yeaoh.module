@@ -354,7 +354,7 @@ function yeaoh_menu_local_tasks_alter(&$data, $router_item, $root_path) {
   $parm = arg(1);
   $nid = empty($parm)?0:$parm;
   $node = node_load($nid);
-  if($user->uid !=0 && $node!=null && $node->type == 'awb_tracking'){
+  if($user->uid !=0 && $node!=null && $node->type == 'awb_tracking' ){
 
   $data ['tabs'][0]['output'][] = array(
     '#theme' => 'menu_local_task',
@@ -381,3 +381,31 @@ $data['tabs']['0']['count'] = $data['tabs']['0']['count'] + 1;
 
 }
 
+
+function yeaoh_form_node_form_alter(&$form, &$form_state){
+
+	if($form['#node']->type == "awb_tracking"){
+		$form['#validate'][] = 'node_title_validate';
+	}
+
+}
+
+function node_title_validate(&$form, &$form_state){
+
+	$pre = $form_state['values']['field_awb_prefix']['und'][0]['value'];
+	$number = $form_state['values']['field_awb_number']['und'][0]['value'];
+
+ 	$nid =  $form_state['values']['nid'];
+
+	if($nid!=null){
+ 	$count = db_query("select count(*) from {node} where type= 'awb_tracking' and nid !=:nid and title =:title",array(':title'=>$pre.$number,':nid'=>$nid))->fetchfield();
+	}else{
+	$count = db_query("select count(*) from {node} where type= 'awb_tracking' and title =:title",array(':title'=>$pre.$number))->fetchfield();
+	}
+
+
+	if($count>0){
+  		form_set_error('title', t('The AWB already exists.'));
+		return false;
+	}
+}
