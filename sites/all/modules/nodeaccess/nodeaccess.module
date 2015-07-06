@@ -1024,7 +1024,6 @@ function nodeaccess_node_update($node) {
   node_access_write_grants($node, $grants, 'nodeaccess_author');
   if (module_exists('user_reference')) {
     $fields = variable_get('nodeaccess_' . $node->type . '_user_reference', array());
-    $form_values['uid'] = array();
     foreach (array_keys($fields) as $field_name) {
       if (isset($node->$field_name)) {
         $old_node = node_load($node->nid);
@@ -1266,6 +1265,7 @@ function nodeaccess_insert_user_reference($node) {
   // Now, append or overwrite the uid with what was specified in the user
   // reference field.
   $fields = variable_get('nodeaccess_' . $node->type . '_user_reference', array());
+  $form_values['uid'] = array();
   foreach ($fields as $field_name => $field) {
     $user_uids = field_get_items('node', $node, $field_name);
     $user_references = user_load_multiple($user_uids);
