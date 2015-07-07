@@ -140,7 +140,7 @@ function yeaoh_mail($key, &$message, $params) {
   if($params['@splitid']!=""){
   $message['body'][] = t("split-id: @splitid", $params);
    }
-  $message['body'][] = t("For more information please visit @url. If you have any question regarding this update or any inquiry please contact us at customerservice2@skylineint.com.au");
+  $message['body'][] = t("For more information please visit @url. If you have any question regarding this update or any inquiry please contact us at customerservice2@skylineint.com.au",$params);
   $message['body'][] = t("This message is intended for the following e-mail address: @receiver_email. If this message is not for you, please delete it.", $params);
 
 
